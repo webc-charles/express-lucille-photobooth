@@ -1,57 +1,71 @@
 import Swiper from 'swiper';
-import { Autoplay, EffectFade } from 'swiper/modules';
+import { Autoplay, EffectFade, Manipulation } from 'swiper/modules';
 
 let swiper;
 
-let currentImages = [];
 
 async function getImages() {
     const response = await fetch('/api/images');
     const images = await response.json();
     return images;
-  }
-
-async function updateSlides() {
-    const newImages = await getImages();
-    
-    if (JSON.stringify(newImages) !== JSON.stringify(currentImages)) {
-        currentImages = newImages;
-        
-        const swiperWrapper = document.querySelector('.swiper-wrapper');
-
-        swiperWrapper.innerHTML = newImages.map(image => 
-            `<div class="swiper-slide"><img src="${image.url}" alt="${image.key}"></div>`
-        ).join('');
-        
-        if (swiper) {
-            swiper.update();
-        }
-    }
 }
 
-function initializeSlider() {
+async function initializeSlider() {
+    let currentImages = Array.from(document
+        .getElementById('slideshow')
+        .querySelectorAll('img')
+        ).map(img => (
+            { 
+                url: img.src, 
+                key: img.alt 
+            }
+        )
+    );
+    
+    console.log({currentImages})
+
     swiper = new Swiper('#slideshow', {
-        modules: [Autoplay, EffectFade],
+        modules: [Autoplay, EffectFade, Manipulation],
         effect: 'fade',
         fadeEffect: { crossFade: true },
         autoplay: {
-            delay: 3000,
+            delay: 2000,
             disableOnInteraction: false,
             pauseOnMouseEnter: false
         },
-        speed: 1000,
+        speed: 500,
         loop: true,
         allowTouchMove: false,
         slidesPerView: 1,
+        lazyLoading: true,
+        lazyLoadingInPrevNext: true,
+        preloadImages: false,
     });
 
-    setInterval(updateSlides, 30000);
+    setInterval(async () => {
+        const newImages = await getImages();
+        
+        // Filter out images that are already in the currentImages array
+        const uniqueNewImages = newImages.filter(newImage => 
+            !currentImages.some(currentImage => currentImage.key === newImage.key)
+        );
+
+        console.log({uniqueNewImages})
+
+        if (uniqueNewImages.length > 0) {
+            currentImages = [...currentImages, ...uniqueNewImages];
+    
+            const slides = uniqueNewImages.map(image => 
+                `<div class="swiper-slide"><img src="${image.url}" alt="${image.key}"></div>`
+            );
+
+            swiper.appendSlide(slides);
+        }
+    }, 30000);
     
     return swiper;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('initializing slider...');
     window.slider = initializeSlider();
-    console.log('Slider initialized', window.slider);
 });
