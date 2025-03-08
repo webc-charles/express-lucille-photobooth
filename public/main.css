@@ -1,0 +1,29 @@
+/*!***************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./src/client/css/main.css ***!
+  \***************************************************************************/
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: black;
+  padding: 0;
+  margin: 0;
+}
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.swiper-slide:not(.swiper-slide-active) {
+  opacity: 0!important;
+}
+
+

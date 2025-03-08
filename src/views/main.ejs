@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Slideshow</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />    
+    <link rel="stylesheet" href="/public/main.css">
+</head>
+<body>
+    <!-- Slider container -->
+    <div class="swiper" id="slideshow">
+        <div class="swiper-wrapper">
+            <% images.forEach(image => { %>
+                <div class="swiper-slide">
+                    <img src="<%= image.url %>" alt="<%= image.key %>">
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <!-- Include bundled JS -->
+    <script src="/public/bundle.js"></script>
+</body>
+</html>
